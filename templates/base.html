@@ -1,0 +1,110 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}Flipcards{% endblock %}</title>
+
+  <meta name="Description" content="Flipcards.">
+  <meta name="msapplication-TileColor" content="#2b5797">
+  <meta name="theme-color" content="#ffffff">
+  {% block meta %}
+  {% endblock %}
+
+  <link rel="icon" type="image/png" href="{% static 'img/favicon.ico' %}" />
+
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/baseit.css' %}">
+  {% block stylesheet %}
+  {% endblock %}
+
+</head>
+
+<body>
+  {% block body %}
+
+    {% include 'includes/header.html' %}
+
+    {% block vars_to_js %}
+    {% endblock %}
+
+    {% if not user.is_authenticated %}
+        {% block imgheader %}
+          <div id="home-splash">
+            <div class="container">
+            <h1 class="text-center" style="padding-top: 140px;">Let's Flipcards</h1>
+            <div class="row justify-content-center">
+              <div class="flip-card">
+                <div class="flip-card-inner">
+                  <div class="flip-card-front">
+                    <h3>Flipcards</h3>
+                  </div>
+                  <div class="flip-card-back">
+                    <h3>helps you to learn</h3>
+                  </div>
+                </div>
+              </div>
+              <div class="flip-card">
+                <div class="flip-card-inner">
+                  <div class="flip-card-front">
+                    <h3>is awesome</h3>
+                  </div>
+                  <div class="flip-card-back">
+                    <h3>is easy to use</h3>
+                  </div>
+                </div>
+              </div>
+            </div>
+              </div>
+          </div>
+        {% endblock imgheader %}
+    {% endif %}
+
+    <main>
+      <div class="container">
+        <div class="messages-container">
+          {% include 'includes/messages.html' %}
+        </div>
+
+        {% block content %}
+        {% endblock %}
+
+      </div>
+    </main>
+
+    {% block fullwidthfooter %}
+    {% endblock %}
+
+    <div class="push"></div>
+
+
+  {% include 'includes/footer.html' %}
+
+  <div class="modal fade" id="modal-alert">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title"></h4>
+        </div>
+        <div class="modal-body"></div>
+      </div>
+    </div>
+  </div>
+  <div class="page-loading">
+    <div class="spinner">
+      <div class="bounce1"></div>
+      <div class="bounce2"></div>
+      <div class="bounce3"></div>
+    </div>
+  </div>
+  <script src="{% static 'js/jquery.min.js' %}"></script>
+  <script src="{% static 'js/bootstrap.min.js' %}"></script>
+  {% block javascript %}
+  {% endblock %}
+
+  {% endblock body %}
+</body>
+</html>

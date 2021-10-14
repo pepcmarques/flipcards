@@ -1,0 +1,15 @@
+DEBUG=False
+SECRET_KEY=<SECRET KEY HERE>
+ALLOWED_HOSTS=localhost,127.0.0.1
+DATABASE_URL=postgres://postgres:postgres@localhost/testdb
+
+SYSTEM_NAME='System Name'
+SYSTEM_NICKNAME='sysname'
+
+# email configuration
+EMAIL_USE_TLS=True
+EMAIL_HOST='your.smtp.server'
+EMAIL_HOST_USER='email@domain.com'
+EMAIL_HOST_PASSWORD='password'
+EMAIL_PORT=587
+DEFAULT_FROM_EMAIL='email@domain.com'

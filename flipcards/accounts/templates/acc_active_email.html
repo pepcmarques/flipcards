@@ -1,0 +1,12 @@
+{% autoescape off %}
+Hello,
+
+You are receiving this email because we got an account creation request for {{ user.email }}.
+
+Please click on the link to confirm your registration,
+
+http://{{ domain }}{% url 'accounts:activate' uid token %}
+
+Kindly ignore this email if you did not request the account creation.
+
+{% endautoescape %}

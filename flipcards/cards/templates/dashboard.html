@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block vars_to_js %}
+  {{ card_collections|json_script:"my_collections" }}
+  {{ card_topics|json_script:"my_topics" }}
+  {{ cards|json_script:"my_cards" }}
+{% endblock %}
+
+{% block content %}
+    <h1>Dashboard</h1>
+    <div id="wrapper">
+        <div id="first">
+            <a href="{% url 'cards:add_collection' %}"><i class="fa fa-plus" title="Create a collection" aria-hidden="true"></i></a>
+            <i class="fas fa-trash" title="Delete current collection"></i>
+            <i class="fas fa-pen" title="Edit current collection"></i>
+            <ul id="collections" style="list-style-type:none;padding:0;margin:0;"></ul>
+        </div>
+        <div id="second">
+            <i class="fa fa-plus" title="Create a topic" aria-hidden="true"></i>
+            <i class="fas fa-trash" title="Delete current topic"></i>
+            <i class="fas fa-pen" title="Edit current topic"></i>
+            <ul id="topics" style="list-style-type:none;padding:0;margin:0;"></ul>
+        </div>
+        <div id="third">
+            <i class="fa fa-plus" title="Create a topic" aria-hidden="true"></i>
+            <i class="fas fa-trash" title="Delete current topic"></i>
+            <i class="fas fa-pen" title="Edit current topic"></i>
+            <div class="flip-card">
+                <div class="flip-card-inner">
+                  <div class="flip-card-front">
+                    <h4 id="front"></h4>
+                  </div>
+                  <div class="flip-card-back">
+                    <h4 id="back"></h4>
+                  </div>
+                </div>
+            </div>
+            <center>
+                <i onclick="previousCard(this)" class="fas fa-arrow-left"></i>
+                <i onclick="nextCard(this)" class="fas fa-arrow-right"></i>
+            </center>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+<script>
+    const my_collections = JSON.parse(document.getElementById('my_collections').textContent);
+    const my_topics = JSON.parse(document.getElementById('my_topics').textContent);
+    const my_cards = JSON.parse(document.getElementById('my_cards').textContent);
+
+    var cardPosition = 0;
+    var currentCards = [];
+
+    function previousCard(element) {
+        cardPosition -= 1;
+        if (cardPosition < 0 ) {
+            cardPosition = currentCards.length - 1;
+        }
+        createCards(currentCards[cardPosition])
+        console.log("PREVIOUS CARD = "+cardPosition)
+    }
+
+    function nextCard(element) {
+        cardPosition += 1;
+        if (cardPosition >= currentCards.length) {
+            cardPosition = 0;
+        }
+        createCards(currentCards[cardPosition])
+        console.log("NEXT CARD = "+cardPosition)
+    }
+
+    function filterTopics(element) {
+        var filtered_topics = my_topics.filter(function (item) { return item.collection == element.getAttribute("item_id") });
+        createList(filtered_topics, "topics");
+        filterCards(document.getElementById("topics").children[0]);
+        return filtered_topics
+    }
+
+    function filterCards(element) {
+        var filtered_cards = my_cards.filter(function (item) { return item.topic == element.getAttribute("item_id") });
+        createCards(filtered_cards[0])
+        currentCards = filtered_cards;
+        cardPosition = 0;
+        return filtered_cards
+    }
+
+    function filterItem(element) {
+        if (element.getAttribute("item_type") == "collections") {
+            console.log("COLLECTIONS");
+            filterTopics(element);
+        }
+        if (element.getAttribute("item_type") == "topics") {
+            filterCards(element);
+        }
+    }
+
+    function createList(array, tagId) {
+
+        var list = document.getElementById(tagId)
+
+        list.innerHTML = '';
+
+        for (var i = 0; i < array.length; i++) {
+            var item = document.createElement('li');
+
+            item.appendChild(document.createTextNode(array[i].name));
+            item.setAttribute('item_id', array[i].id);
+            item.setAttribute('item_type', tagId);
+
+            if (tagId == "topics") {
+                item.setAttribute("collections", array[i].collection);
+            }
+
+            item.onclick = function () { filterItem(this) };
+
+            list.appendChild(item);
+        }
+
+    }
+
+    function createCards(card) {
+        var is_card = true;
+
+        if (typeof card === 'undefined') {
+            is_card = false;
+        }
+
+        var f = document.getElementById("front");
+        f.innerHTML = '';
+        var front_item = document.createElement('span');
+        if (is_card) {
+            front_item.innerHTML = card.front;
+        } else {
+            front_item.innerHTML = '';
+        }
+        f.appendChild(front_item);
+
+        var b = document.getElementById("back");
+        b.innerHTML = '';
+        var back_item = document.createElement('span');
+        if (is_card) {
+            back_item.innerHTML = card.back;
+        } else {
+            back_item.innerHTML = '';
+        }
+        b.appendChild(back_item);
+    }
+
+    function main() {
+        createList(my_collections, "collections")
+        filtered_topics = my_topics.filter(function (item) { return item.collection == my_collections[0].id });
+        createList(filtered_topics, "topics")
+        filtered_cards = my_cards.filter(function (item) { return item.topic == filtered_topics[0].id });
+        currentCards = filtered_cards;
+        createCards(filtered_cards[0], 0)
+    }
+
+    main();
+</script>
+{% endblock %}

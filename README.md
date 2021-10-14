@@ -1,2 +1,2 @@
-# spincards
+# flipcards
 Flashcards for students

@@ -1,0 +1,23 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+flake8 = "*"
+pytest = "*"
+pytest-django = "*"
+model-bakery = "*"
+
+[packages]
+django = "*"
+python-decouple = "*"
+psycopg2-binary = "*"
+django-crispy-forms = "*"
+dj-database-url = "*"
+gunicorn = "*"
+whitenoise = "*"
+six = "*"
+
+[requires]
+python_version = "3.8"

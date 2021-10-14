@@ -1,0 +1,87 @@
+<header>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+      <div class="container">
+      <a href="{% url 'index' %}" class="navbar-brand value-brand">Flipcards</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+          <ul class="navbar-nav mr-auto">
+            {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'cards:handle_dashboard' %}">My collections<span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'index' %}">Public collections</a>
+                </li>
+            {% endif %}
+          </ul>
+          {% if user.is_authenticated %}
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <span class="navbar-text username-divider"></span>
+            </li>
+
+            {% if request.user.nickname or request.user.nickname.strip %}
+                <li>
+                  <span class="navbar-text">Hi {{ request.user.nickname }}</span>
+                </li>
+            {% else %}
+                {% if request.user.first_name or request.user.first_name.strip %}
+                    <li>
+                      <span class="navbar-text">Hi {{ request.user.first_name }}</span>
+                    </li>
+                {% else %}
+                    <li>
+                      <span class="navbar-text">Hi {{ request.user.email }}</span>
+                    </li>
+                {% endif %}
+            {% endif %}
+
+            <span class="navbar-text username-divider"></span>
+
+            <li class="nav-item dropdown">
+                 <a class="nav-link" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                     <span data-toggle="tooltip" data-placement="bottom" data-container="body" title="Setup"><i class="fa fa-cog"></i></span>
+                 </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="{% url 'index' %}">
+                        Profile
+                    </a>
+                    <a class="dropdown-item" href="{% url 'index' %}">My books</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{% url 'index' %}">Catalog</a>
+                </div>
+            </li>
+
+            <span class="navbar-text username-divider"></span>
+
+            <li class="nav-item dropdown">
+                <a class="nav-link" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span data-toggle="tooltip" data-placement="bottom" data-container="body" title="Setup"><i class="fas fa-envelope"></i></span>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="{% url 'index' %}">
+                        My Messages
+                    </a>
+                </div>
+            </li>
+
+            <span class="navbar-text username-divider"></span>
+            <li>
+              <a href="{% url 'accounts:logout' %}">
+                <span data-toggle="tooltip" data-placement="bottom" data-container="body" title="Sign out">
+                  <span class="navbar-text"><i class="fas fa-sign-out-alt"></i></span>
+                </span>
+              </a>
+            </li>
+          </ul>
+        {% else %}
+          <span class="navbar-text"><a href="{% url 'accounts:login' %}" class="nav-link">Sign in</a></span>
+          <span class="navbar-text username-divider"></span>
+          <span class="navbar-text"><a href="{% url 'accounts:signup' %}" class="nav-link" style="margin-right: 5px;">Sign up</a></span>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+</header>
