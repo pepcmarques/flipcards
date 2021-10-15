@@ -29,11 +29,16 @@ def edit_collection(request, collection):
     pass
 
 
+def serialize_qs(qs):
+    return [model_to_dict(item) for item in qs]
+
+
 def list_collections(request):
     card_collections = CardCollection.objects.filter(owner=request.user)
-    card_topics = []
-    cards = []
+    card_topics = CardTopic.objects.filter(collection__in=card_collections)
+    cards = Card.objects.filter(topic__in=card_topics)
     #
+    """
     c1 = CardCollection(id=1, name="Colecao 1", is_public=True, description="Minha colecao 1", owner=request.user)
     c2 = CardCollection(id=2, name="Colecao 2", is_public=True, description="Minha colecao 2", owner=request.user)
 
@@ -60,15 +65,18 @@ def list_collections(request):
              model_to_dict(k6),
              model_to_dict(k7)]
     #
-    """
     if card_collections:
         card_topics = CardTopic.objects.filter(collection=card_collections[0])
         if card_topics:
             cards = Card.objects.filter(topic=card_topics[0])
     """
+
     return render(request,
                   'dashboard.html',
-                  context={"card_collections": card_collections, "card_topics": card_topics, "cards": cards}
+                  context={"card_collections": serialize_qs(card_collections),
+                           "card_topics": serialize_qs(card_topics),
+                           "cards": serialize_qs(cards)
+                           }
                   )
 
 
@@ -102,6 +110,8 @@ def add_collection(request):
         if form.is_valid():
             collection = form.save(commit=False)
             # Here I can add another attribute
+            # user = User.objects.get(pk=request.user)
+            collection.owner = request.user
             collection.save()
             return HttpResponseRedirect(reverse('cards:handle_dashboard'))
     else:
