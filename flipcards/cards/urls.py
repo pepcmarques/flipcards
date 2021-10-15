@@ -22,5 +22,6 @@ app_name = 'cards'
 urlpatterns = [
     path('dashboard/', views.handle_dashboard, name="handle_dashboard"),
     path('collection/new/', views.add_collection, name="add_collection"),
-    path('collection/<uuid:external_id>/', views.handle_dashboard, name="edit_collection"),
+    path('collection/<int:some_id>/change/', views.edit_collection, name="edit_collection"),
+    path('collection/<int:some_id>/delete/', views.delete_collection, name="delete_collection"),
 ]

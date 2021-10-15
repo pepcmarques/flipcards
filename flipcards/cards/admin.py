@@ -1,3 +1,7 @@
 from django.contrib import admin
 
-# Register your models here.
+from flipcards.cards.models import CardCollection, CardTopic, Card
+
+admin.site.register(CardCollection)
+admin.site.register(CardTopic)
+admin.site.register(Card)

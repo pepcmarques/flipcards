@@ -9,21 +9,24 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Dashboard</h1>
+    <h3>Current: <span id="cur_col"></span><span id="cur_top"></span></h3>
     <div id="wrapper">
         <div id="first">
-            <a href="{% url 'cards:add_collection' %}"><i class="fa fa-plus" title="Create a collection" aria-hidden="true"></i></a>
-            <i class="fas fa-trash" title="Delete current collection"></i>
-            <i class="fas fa-pen" title="Edit current collection"></i>
+            <span style="color:darkred;">Collections</span>
+            <a href="{% url 'cards:add_collection' %}" style="color:black;text-decoration:none;"><i class="fa fa-plus" title="Create a collection" aria-hidden="true"></i></a>
+            <i class="fas fa-trash" title="Delete current collection" style="cursor:pointer;" onclick="actionCollection('delete')"></i>
+            <i class="fas fa-pen" title="Edit current collection" style="cursor:pointer;" onclick="actionCollection('change')"></i>
             <ul id="collections" style="list-style-type:none;padding:0;margin:0;"></ul>
         </div>
         <div id="second">
+            Topics
             <i class="fa fa-plus" title="Create a topic" aria-hidden="true"></i>
             <i class="fas fa-trash" title="Delete current topic"></i>
             <i class="fas fa-pen" title="Edit current topic"></i>
             <ul id="topics" style="list-style-type:none;padding:0;margin:0;"></ul>
         </div>
         <div id="third">
+            Cards
             <i class="fa fa-plus" title="Create a topic" aria-hidden="true"></i>
             <i class="fas fa-trash" title="Delete current topic"></i>
             <i class="fas fa-pen" title="Edit current topic"></i>
@@ -54,13 +57,21 @@
     var cardPosition = 0;
     var currentCards = [];
 
+    var currentCollectionId = null;
+
+    function actionCollection(action) {
+        if (currentCollectionId == null) {
+            return
+        }
+        window.location.href = '/cards/collection/'+currentCollectionId+'/'+action;
+    }
+
     function previousCard(element) {
         cardPosition -= 1;
         if (cardPosition < 0 ) {
             cardPosition = currentCards.length - 1;
         }
         createCards(currentCards[cardPosition])
-        console.log("PREVIOUS CARD = "+cardPosition)
     }
 
     function nextCard(element) {
@@ -69,18 +80,34 @@
             cardPosition = 0;
         }
         createCards(currentCards[cardPosition])
-        console.log("NEXT CARD = "+cardPosition)
     }
 
     function filterTopics(element) {
-        var filtered_topics = my_topics.filter(function (item) { return item.collection == element.getAttribute("item_id") });
+        var filtered_topics = [];
+        filtered_topics = my_topics.filter(function (item) { return item.collection == element.getAttribute("id") });
+        //
+        var current_topic = document.getElementById("cur_top");
+        if (typeof filtered_topics[0] === 'undefined') {
+            current_topic.innerHTML = '';
+        } else {
+            current_topic.innerHTML = ' > ' + filtered_topics[0].name;
+        }
+        //
         createList(filtered_topics, "topics");
         filterCards(document.getElementById("topics").children[0]);
         return filtered_topics
     }
 
     function filterCards(element) {
-        var filtered_cards = my_cards.filter(function (item) { return item.topic == element.getAttribute("item_id") });
+        var filtered_cards = my_cards.filter(function (item) { return item.topic == element.getAttribute("id") });
+        //
+        var current_topic = document.getElementById("cur_top");
+        if (typeof element === 'undefined') {
+            current_topic.innerHTML = '';
+        } else {
+            current_topic.innerHTML = ' > ' + element.innerHTML;
+        }
+        //
         createCards(filtered_cards[0])
         currentCards = filtered_cards;
         cardPosition = 0;
@@ -89,7 +116,15 @@
 
     function filterItem(element) {
         if (element.getAttribute("item_type") == "collections") {
-            console.log("COLLECTIONS");
+            //
+            var current_collection = document.getElementById("cur_col");
+            if (typeof element === 'undefined') {
+                current_collection.innerHTML = '';
+            } else {
+                currentCollectionId = element.id;
+                current_collection.innerHTML = element.innerHTML;
+            }
+            //
             filterTopics(element);
         }
         if (element.getAttribute("item_type") == "topics") {
@@ -107,8 +142,9 @@
             var item = document.createElement('li');
 
             item.appendChild(document.createTextNode(array[i].name));
-            item.setAttribute('item_id', array[i].id);
+            item.setAttribute('id', array[i].id);
             item.setAttribute('item_type', tagId);
+            item.setAttribute('style', 'cursor:pointer;');
 
             if (tagId == "topics") {
                 item.setAttribute("collections", array[i].collection);
@@ -151,6 +187,15 @@
 
     function main() {
         createList(my_collections, "collections")
+        //
+        var current_collection = document.getElementById("cur_col");
+        if (typeof my_collections[0] === 'undefined') {
+            current_collection.innerHTML = '';
+        } else {
+            currentCollectionId = my_collections[0].id;
+            current_collection.innerHTML = my_collections[0].name;
+        }
+        //
         filtered_topics = my_topics.filter(function (item) { return item.collection == my_collections[0].id });
         createList(filtered_topics, "topics")
         filtered_cards = my_cards.filter(function (item) { return item.topic == filtered_topics[0].id });
