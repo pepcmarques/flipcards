@@ -20,9 +20,9 @@
         </div>
         <div id="second">
             Topics
-            <i class="fa fa-plus" title="Create a topic" aria-hidden="true"></i>
-            <i class="fas fa-trash" title="Delete current topic"></i>
-            <i class="fas fa-pen" title="Edit current topic"></i>
+            <i class="fas fa-plus" title="Add topic" style="cursor:pointer;" onclick="actionTopic('new')"></i>
+            <i class="fas fa-trash" title="Delete current topic" style="cursor:pointer;" onclick="actionTopic('delete')"></i>
+            <i class="fas fa-pen" title="Edit current topic" style="cursor:pointer;" onclick="actionTopic('change')"></i>
             <ul id="topics" style="list-style-type:none;padding:0;margin:0;"></ul>
         </div>
         <div id="third">
@@ -66,6 +66,16 @@
         window.location.href = '/cards/collection/'+currentCollectionId+'/'+action;
     }
 
+    function actionTopic(action) {
+        if (action == 'new') {
+            window.location.href = '/cards/collection/'+currentCollectionId+'/topic/'+action;
+        }
+        if (currentTopicId == null) {
+            return
+        }
+        window.location.href = '/cards/collection/'+currentCollectionId+'/topic/'+currentTopicId+'/'+action;
+    }
+
     function previousCard(element) {
         cardPosition -= 1;
         if (cardPosition < 0 ) {
@@ -104,7 +114,9 @@
         var current_topic = document.getElementById("cur_top");
         if (typeof element === 'undefined') {
             current_topic.innerHTML = '';
+            currentTopicId = null;
         } else {
+            currentTopicId = element.id;
             current_topic.innerHTML = ' > ' + element.innerHTML;
         }
         //
