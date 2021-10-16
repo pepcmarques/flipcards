@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
-from flipcards.cards.forms import CollectionForm, CollectionSuperForm
+from flipcards.cards.forms import CollectionForm, CollectionSuperForm, TopicForm
 from flipcards.cards.models import CardCollection, CardTopic, Card
 from flipcards.cards.services import serialize_qs
 
@@ -18,6 +18,40 @@ def get_obj_collection(request, external_id):
         messages.add_message(request, messages.INFO, "Couldn't find collection")
         return HttpResponseRedirect(reverse('cards:handle_dashboard'))
     return collection
+
+
+@login_required()
+def add_topic(request, some_id=None):
+    if some_id is None:
+        messages.add_message(request, messages.INFO, "Topic couldn't be created under this Collection")
+        return HttpResponseRedirect(reverse('cards:handle_dashboard'))
+
+    try:
+        collection = CardCollection.objects.get(pk=some_id)
+    except ObjectDoesNotExist:
+        messages.add_message(request, messages.INFO, "Topic couldn't be created under this Collection")
+        return HttpResponseRedirect(reverse('cards:handle_dashboard'))
+
+    if collection.owner != request.user:
+        messages.add_message(request, messages.INFO, "Topic couldn't be created under this Collection")
+        return HttpResponseRedirect(reverse('cards:handle_dashboard'))
+
+    if request.method == "POST":
+        form = TopicForm(request.POST)
+        if form.is_valid():
+
+            topic = form.save(commit=False)
+            # Here I can add another attribute
+            topic.collection = collection
+            try:
+                topic.save()
+            except IntegrityError as e:
+                messages.add_message(request, messages.INFO, "Topic name already exists")
+                return HttpResponseRedirect(reverse('cards:handle_dashboard'))
+            return HttpResponseRedirect(reverse('cards:handle_dashboard'))
+    else:
+        form = TopicForm()
+    return render(request, 'topic.html', context={"form": form})
 
 
 @login_required()

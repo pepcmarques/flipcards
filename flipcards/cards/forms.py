@@ -1,6 +1,6 @@
 from django.forms import ModelForm
 
-from flipcards.cards.models import CardCollection
+from flipcards.cards.models import CardCollection, CardTopic
 
 
 class CollectionForm(ModelForm):
@@ -14,3 +14,8 @@ class CollectionSuperForm(ModelForm):
         model = CardCollection
         fields = ['name', 'is_public', 'description']
 
+
+class TopicForm(ModelForm):
+    class Meta:
+        model = CardTopic
+        fields = ['name', 'description']
