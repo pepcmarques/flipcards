@@ -58,6 +58,7 @@
     var currentCards = [];
 
     var currentCollectionId = null;
+    var currentTopicId = null;
 
     function actionCollection(action) {
         if (currentCollectionId == null) {
@@ -67,13 +68,16 @@
     }
 
     function actionTopic(action) {
+        console.log(action);
         if (action == 'new') {
             window.location.href = '/cards/collection/'+currentCollectionId+'/topic/'+action;
+        } else {
+            if (currentTopicId == null) {
+                return
+            } else {
+                window.location.href = '/cards/collection/'+currentCollectionId+'/topic/'+currentTopicId+'/'+action;
+            }
         }
-        if (currentTopicId == null) {
-            return
-        }
-        window.location.href = '/cards/collection/'+currentCollectionId+'/topic/'+currentTopicId+'/'+action;
     }
 
     function previousCard(element) {
@@ -144,6 +148,8 @@
         }
     }
 
+    function resize(elem, percent) { elem.style.fontSize = percent; }
+
     function createList(array, tagId) {
 
         var list = document.getElementById(tagId)
@@ -157,6 +163,8 @@
             item.setAttribute('id', array[i].id);
             item.setAttribute('item_type', tagId);
             item.setAttribute('style', 'cursor:pointer;');
+            item.setAttribute('onmouseover', 'resize(this, "125%")');
+            item.setAttribute('onmouseout', 'resize(this, "100%")');
 
             if (tagId == "topics") {
                 item.setAttribute("collections", array[i].collection);
@@ -209,6 +217,13 @@
         }
         //
         filtered_topics = my_topics.filter(function (item) { return item.collection == my_collections[0].id });
+        //
+        if (typeof filtered_topics[0] !== 'undefined') {
+            currentTopicId = filtered_topics[0].id;
+            var current_topic = document.getElementById("cur_top");
+            current_topic.innerHTML = ' > ' + filtered_topics[0].name;
+        }
+        //
         createList(filtered_topics, "topics")
         filtered_cards = my_cards.filter(function (item) { return item.topic == filtered_topics[0].id });
         currentCards = filtered_cards;

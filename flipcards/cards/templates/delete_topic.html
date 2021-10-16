@@ -1,0 +1,12 @@
+{% extends 'base.html'%}
+
+{% load static from static %}
+
+{% block content %}
+    <form method="POST">
+        {% csrf_token %}
+        <h4>Delete topic << {{ topic.name }} >> and its children (i.e.: cards from this topic)?</h4>
+        <button formaction="{% url 'cards:handle_dashboard' %}" formmethod="get">Cancel</button>
+        <button type="submit">Confirm</button>
+    </form>
+{% endblock %}
