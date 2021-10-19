@@ -28,4 +28,9 @@ urlpatterns = [
     path('collection/<int:col_id>/topic/new/', views.add_topic, name="add_topic"),
     path('collection/<int:col_id>/topic/<int:top_id>/change/', views.edit_topic, name="edit_topic"),
     path('collection/<int:col_id>/topic/<int:top_id>/delete/', views.delete_topic, name="delete_topic"),
+    #
+    path('collection/<int:col_id>/topic/<int:top_id>/card/new/', views.add_card, name="add_card"),
+    path('collection/<int:col_id>/topic/<int:top_id>/card/<int:card_id>/change/', views.edit_card, name="edit_topic"),
+    path('collection/<int:col_id>/topic/<int:top_id>/card/<int:card_id>/delete/', views.delete_card,
+         name="delete_topic"),
 ]
