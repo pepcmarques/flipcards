@@ -46,7 +46,7 @@ def add_card(request, col_id=None, top_id=None):
             try:
                 card.save()
                 card_id = card.id
-            except IntegrityError as e:
+            except IntegrityError:
                 messages.add_message(request, messages.INFO, "Card 'front & back' already exists")
             return handle_dashboard(request, col_id=col_id, top_id=top_id, card_id=card_id)
     else:
@@ -148,7 +148,7 @@ def add_topic(request, col_id=None):
             try:
                 topic.save()
                 top_id = topic.id
-            except IntegrityError as e:
+            except IntegrityError:
                 messages.add_message(request, messages.INFO, "Topic name already exists")
                 return handle_dashboard(request, col_id=col_id)
 
@@ -232,7 +232,7 @@ def add_collection(request):
             try:
                 collection.save()
                 col_id = collection.id
-            except IntegrityError as e:
+            except IntegrityError:
                 messages.add_message(request, messages.INFO, "Collection name already exists")
                 return handle_dashboard(request)
             return handle_dashboard(request, col_id=col_id)
