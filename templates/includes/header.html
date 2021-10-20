@@ -45,29 +45,12 @@
                      <span data-toggle="tooltip" data-placement="bottom" data-container="body" title="Setup"><i class="fa fa-cog"></i></span>
                  </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="{% url 'index' %}">
-                        Profile
-                    </a>
-                    <a class="dropdown-item" href="{% url 'index' %}">My books</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{% url 'index' %}">Catalog</a>
+                    <a class="dropdown-item" href="{% url 'accounts:profile' %}">Profile</a>
                 </div>
             </li>
 
             <span class="navbar-text username-divider"></span>
 
-            <li class="nav-item dropdown">
-                <a class="nav-link" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span data-toggle="tooltip" data-placement="bottom" data-container="body" title="Setup"><i class="fas fa-envelope"></i></span>
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="{% url 'index' %}">
-                        My Messages
-                    </a>
-                </div>
-            </li>
-
-            <span class="navbar-text username-divider"></span>
             <li>
               <a href="{% url 'accounts:logout' %}">
                 <span data-toggle="tooltip" data-placement="bottom" data-container="body" title="Sign out">
