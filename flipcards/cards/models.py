@@ -1,5 +1,3 @@
-import uuid
-
 from django.db import models
 
 from flipcards.accounts.models import User

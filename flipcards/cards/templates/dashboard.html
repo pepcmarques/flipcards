@@ -6,6 +6,9 @@
   {{ card_collections|json_script:"my_collections" }}
   {{ card_topics|json_script:"my_topics" }}
   {{ cards|json_script:"my_cards" }}
+  {{ col_id|json_script:"col_id" }}
+  {{ top_id|json_script:"top_id" }}
+  {{ card_id|json_script:"card_id" }}
 {% endblock %}
 
 {% block content %}
@@ -27,9 +30,10 @@
         </div>
         <div id="third">
             Cards
-            <i class="fa fa-plus" title="Create a topic" aria-hidden="true"></i>
-            <i class="fas fa-trash" title="Delete current topic"></i>
-            <i class="fas fa-pen" title="Edit current topic"></i>
+            <i class="fas fa-plus" title="Add card" style="cursor:pointer;" onclick="actionCard('new')"></i>
+            <i class="fas fa-trash" title="Delete current card" style="cursor:pointer;" onclick="actionCard('delete')"></i>
+            <i class="fas fa-pen" title="Edit current card"  style="cursor:pointer;" onclick="actionCard('change')"></i>
+            <p></p>
             <div class="flip-card">
                 <div class="flip-card-inner">
                   <div class="flip-card-front">
@@ -54,11 +58,20 @@
     const my_topics = JSON.parse(document.getElementById('my_topics').textContent);
     const my_cards = JSON.parse(document.getElementById('my_cards').textContent);
 
+    const col_id = JSON.parse(document.getElementById('col_id').textContent);
+    const top_id = JSON.parse(document.getElementById('top_id').textContent);
+    const card_id = JSON.parse(document.getElementById('card_id').textContent);
+
     var cardPosition = 0;
     var currentCards = [];
 
     var currentCollectionId = null;
     var currentTopicId = null;
+    var currentCardId = null;
+
+    function isEmpty(value) {
+        return value == null;
+    }
 
     function actionCollection(action) {
         if (currentCollectionId == null) {
@@ -68,14 +81,31 @@
     }
 
     function actionTopic(action) {
-        console.log(action);
+        if (isEmpty(currentCollectionId)) {
+            return
+        }
         if (action == 'new') {
             window.location.href = '/cards/collection/'+currentCollectionId+'/topic/'+action;
         } else {
-            if (currentTopicId == null) {
+            if (isEmpty(currentTopicId)) {
                 return
             } else {
                 window.location.href = '/cards/collection/'+currentCollectionId+'/topic/'+currentTopicId+'/'+action;
+            }
+        }
+    }
+
+    function actionCard(action) {
+        if (isEmpty(currentCollectionId) || isEmpty(currentTopicId)) {
+            return
+        }
+        if (action == 'new') {
+            window.location.href = '/cards/collection/'+currentCollectionId+'/topic/'+currentTopicId+'/card/'+action;
+        } else {
+            if (currentCardId == null) {
+                return
+            } else {
+                window.location.href = '/cards/collection/'+currentCollectionId+'/topic/'+currentTopicId+'/card/'+currentCardId+'/'+action;
             }
         }
     }
@@ -113,7 +143,11 @@
     }
 
     function filterCards(element) {
-        var filtered_cards = my_cards.filter(function (item) { return item.topic == element.getAttribute("id") });
+        if (isEmpty(element)) {
+            var filtered_cards = [];
+        } else {
+            var filtered_cards = my_cards.filter(function (item) { return item.topic == element.getAttribute("id") });
+        }
         //
         var current_topic = document.getElementById("cur_top");
         if (typeof element === 'undefined') {
@@ -203,31 +237,52 @@
             back_item.innerHTML = '';
         }
         b.appendChild(back_item);
+
+        currentCardId = card.id;
     }
 
     function main() {
         createList(my_collections, "collections")
         //
         var current_collection = document.getElementById("cur_col");
-        if (typeof my_collections[0] === 'undefined') {
+        if (isEmpty(my_collections[0])) {
             current_collection.innerHTML = '';
         } else {
-            currentCollectionId = my_collections[0].id;
-            current_collection.innerHTML = my_collections[0].name;
+            if (isEmpty(col_id)) {
+                currentCollectionId = my_collections[0].id;
+                current_collection.innerHTML = my_collections[0].name;
+            } else {
+                var result = my_collections.find(obj => { return obj.id === col_id });
+                currentCollectionId = col_id;
+                current_collection.innerHTML = result.name;
+            }
         }
         //
-        filtered_topics = my_topics.filter(function (item) { return item.collection == my_collections[0].id });
+        if (isEmpty(currentCollectionId)) {
+            filtered_topics = my_topics.filter(function (item) { return item.collection ==  my_collections[0].id });
+        } else {
+            filtered_topics = my_topics.filter(function (item) { return item.collection == currentCollectionId });
+        }
         //
         if (typeof filtered_topics[0] !== 'undefined') {
-            currentTopicId = filtered_topics[0].id;
-            var current_topic = document.getElementById("cur_top");
-            current_topic.innerHTML = ' > ' + filtered_topics[0].name;
+            if (isEmpty(top_id)) {
+                currentTopicId = filtered_topics[0].id;
+                var current_topic = document.getElementById("cur_top");
+                current_topic.innerHTML = ' > ' + filtered_topics[0].name;
+            } else {
+                var result = filtered_topics.find(obj => { return obj.id === top_id });
+                currentTopicId = top_id;
+                var current_topic = document.getElementById("cur_top");
+                current_topic.innerHTML = ' > ' + result.name;
+            }
         }
         //
         createList(filtered_topics, "topics")
-        filtered_cards = my_cards.filter(function (item) { return item.topic == filtered_topics[0].id });
+        //
+        filtered_cards = my_cards.filter(function (item) { return item.topic == currentTopicId });
         currentCards = filtered_cards;
-        createCards(filtered_cards[0], 0)
+        currentCardId = filtered_cards[0].id;
+        createCards(filtered_cards[0], 0);
     }
 
     main();

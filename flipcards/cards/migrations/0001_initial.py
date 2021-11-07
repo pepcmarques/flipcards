@@ -33,7 +33,8 @@ class Migration(migrations.Migration):
                 ('external_id', models.UUIDField(default=uuid.uuid4, editable=False)),
                 ('name', models.CharField(max_length=20)),
                 ('description', models.TextField()),
-                ('collection', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='cards.cardcollection')),
+                ('collection', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                 to='cards.cardcollection')),
             ],
         ),
         migrations.CreateModel(

@@ -1,6 +1,6 @@
 {% if messages %}
     {% for message in messages %}
-      <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+      <div class="alert {{ message.tags }} alert-dismissible" id="alertDiv" role="alert">
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -8,3 +8,12 @@
       </div>
     {% endfor %}
 {% endif %}
+
+{% block javascript %}
+<script>
+    const target = document.getElementById("alertDiv");
+    const milliseconds = 3500;
+    window.onload = setInterval(() => target.style.opacity = '0', milliseconds)
+    setTimeout(function () { target.remove(); }, milliseconds);
+</script>
+{% endblock %}

@@ -248,3 +248,6 @@ header .navbar .username-divider {
     float: left;
 }
 
+#alertDiv {
+  transition: opacity 1s;
+}

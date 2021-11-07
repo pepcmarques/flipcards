@@ -153,14 +153,14 @@ def update_user(request):
     form = UsersUpdateForm(request.POST or None, instance=user)
     if form.is_valid():
         form.save()
-        return redirect(reverse('base:home'))
+        return redirect(reverse('index'))
     return render(request, 'user-form.html', {'form': form, 'user': user})
 
 
 def password_change(request, user_id):
     if not request.user.is_superuser:
         if request.user.id != user_id:
-            return redirect(reverse('base:index'))
+            return redirect(reverse('index'))
     user = User.objects.get(id=user_id)
     form = PasswordChangeForm(request.POST or None, instance=user)
     if form.is_valid():
